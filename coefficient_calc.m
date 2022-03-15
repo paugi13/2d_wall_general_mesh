@@ -1,48 +1,87 @@
-function [ap,ae, aw, bp, node] = coefficient_calc(Rext,Rint,lambda,n, ef, alpha_ext, Text, alpha_end, Twall)
+function [ap,ae, aw, an, as, bp, node] = coefficient_calc(Text, alpha_ext, L, W, H, n , m, Qv)
 % Function to calculate all the coefficients through the fin.
 % They are returned in vector format.
 
-ap = zeros(n+1, 1);
-aw = zeros(n+1, 1);
-ae = zeros(n+1, 1);
-bp = zeros(n+1, 1);
-node = zeros(n+1, 1);
+ap = zeros(m+2, n+2);
+aw = zeros(m+2, n+2);
+ae = zeros(m+2, n+2);
+an = zeros(m+2, n+2);
+as = zeros(m+2, n+2);
+bp = zeros(m+2, n+2);
+node = zeros(m+2, n+2);
+
+qv = Qv/(L*W*H);
+
 % Calculating coefficients ([W/K])
 % Boundary counditions may be required for nodes on limits.
 
-delta_r = (Rext-Rint)/n;
+node(:,1) = 0;
+node(1,:) = 0;
+node(m+2, :) = H;
+node(:, n+2) = L;
 
-rP = 0;
-for i=2:(n+1)
-    
-   %Now rP is modified to build the next node's coefficients.
-   rP = rP + delta_r;
-   node(i) = rP;
-   rw = rP - delta_r/2;
-   re = rP + delta_r/2;
-   Sw = 2*pi*rw*ef;
-   Se = 2*pi*re*ef;
-   Ap = 2*pi*(re^2-rw^2);
-   dpw = delta_r;
-   dpe = delta_r;
-   
-   ap(i) = (lambda*Sw/dpw) + (lambda*Se/dpe) + alpha_ext*Ap;
-   aw(i) = lambda*Sw/dpw;
-   ae(i) = lambda*Se/dpe;
-   bp(i) = alpha_ext*Text*Ap;
-   
-   if i == (n+1)
-       Ap = 2*pi*(rP^2-rw^2);
-       ae(i)=0;
-       ap(i)=(lambda*Sw/dpw) + alpha_ext*Ap + alpha_end*2*pi*ef*Rext;
-       bp(i)= alpha_ext*Text*Ap + alpha_end*Text*2*pi*ef*Rext;
-   end
+inc_y = H/m;
+inc_x = L/n;
+pos_x = inc_x/2;
+pos_y = inc_y/2;
+
+for j = 2:(m+1)
+    for i=2:(n+1)
+       pos_x = pos_x + inc_x; 
+       node(j,i) = [pos_x pos_y];
+       Sw = inc_y*W;
+       Se = inc_y*W;
+       Sn = inc_x*W;
+       Ss = inc_x*W;
+       dpw = inc_x;
+       dpe = inc_x;
+       dpn = inc_y;
+       dps = inc_y;
+
+       aw(j,i) = lambda*Sw/dpw;
+       ae(j,i) = lambda*Se/dpe;
+       an(j,i) = lambda*Sn/dpn;
+       as(j,i) = lambda*Ss/dps;
+       ap(j,i) = aw(j,i) + ae(j,i)+ an(j,i)+ as(j,i);
+       bp(j,i) = qv*(inc_x*inc_y*W);     
+    end
+    pos_x = inc_x/2;
+    pos_y = pos_y + inc_y;
 end
 
-       ae(1)=0;
-       aw(1)=0;
-       ap(1) = 1;
-       bp(1) = Twall;
+%Boundary conditions that can be adapted to other types of pieces. 
+%Left side
+ap(:, 1) = 1;
+ae(:, 1) = 1;
+an(:, 1) = 0;
+as(:, 1) = 0;
+aw(:, 1) = 0;
+bp(:, 1) = 0;
+
+%Lower side
+ap(1, :) = 1;
+ae(1, :) = 0;
+an(1, :) = 1;
+as(1, :) = 0;
+aw(1, :) = 0;
+bp(1, :) = 0;
+
+%Right side
+ae(:, n+2) = 0;
+an(:, n+2) = 0;
+as(:, n+2) = 0;
+aw(:, n+2) = lambda/(inc_x/2);
+bp(:, n+2) = alpha_ext*Text;
+ap(:, n+2) = aw+alpha_ext;
+
+%Upper side
+ae(m+2, :) = 0;
+an(m+2, :) = 0;
+as(m+2, :) = lambda/(inc_y/2);
+aw(m+2, :) = 0;
+bp(m+2, :) = alpha_ext*Text;
+ap(m+2, :) = as+alpha_ext;
+
 
 end
 

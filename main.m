@@ -1,43 +1,50 @@
-%% Program to solve heat transfer problems in circular fins through finite difference method.
-% In this case iterations are made using the Gauss - Seidel Method. 
-% The circular fin in this problem is around a circular pipe carrying some gas. 
+%% Program to solve 2D walls through Gauss-Seidel iteration method. 
+% Suitable boundary conditions must be defined. 
+% Firstly conductivity constants are defined as unvariable. 
+% Left and lower walls are defined as adiabatic. 
+% Discretitzation method: Centered nodes. 
 
-% Physical inputs.
-% Adiabatic end is not assumed.
 clc
 clear; close all;
-Rint = 1;
-Rext = 2;
-ef = 0.05;
 
+% Cubic piece. 
+
+L = 2;
+W = 2;
+H = 2;
+
+%Lambda will be later defined as variable.
 lambda = 70;
-Twall = 400;
 Text = 200;
 alpha_ext = 100; 
-alpha_end = 100;
+Qv = 1000;
 
 % Solver caractheristics
-
 n = 100;
+m = 100;
 delta = 10^-6;
 Tinic = 700;
 
 %% Calculating coefficients ([W/K])
-[ap,ae, aw, bp, node] = coefficient_calc(Rext,Rint,lambda,n, ef, alpha_ext, Text, alpha_end, Twall);
+[ap,ae, aw, an, as, bp, node] = coefficient_calc(Text, alpha_ext, L, W, H, n , m, Qv);
 
 %% Initiation
-T = zeros(n+1,1);
+T = zeros(m+2, n+2);
 
-for i =1:(n+1)
-    T(i) = Tinic;    
+%Line-by-line algorithm.
+for j = 1:(m+2)
+    for i = 1:(n+2)
+        T(j, i) = Tinic;    
+    end
 end
+
 boolean = true;
 rep = 0;
 
 while boolean == true
-    [T, Taux] = temp_field_calc(ap,ae, aw, bp, T, n, Twall);
+    [T, Taux] = temp_field_calc(ap, ae, aw, an, as, bp, T, n, m);
     [error] = error_calc(T, Taux, n);
-    if max(error) < delta
+    if max(error, [], 'all') < delta
         boolean = false;
     end
     rep = rep+1;
@@ -45,18 +52,3 @@ end
 
 
 %Postprocessing
-text_line = 0:0.5:Rext;
-Text_vec = zeros(size(text_line,2), 1);
-for i = 1:size(Text_vec,1)
-   Text_vec(i) = Text;
-end
-figure
-plot(node, T, 'r');
-xlabel('r [m]');
-ylabel('T [K]');
-title('Temperature along the circular fin');
-grid on
-
-hold on
-plot(text_line, Text_vec, 'black');
-hold off
