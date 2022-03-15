@@ -50,7 +50,7 @@ for j = 2:(m+1)
 end
 
 %Boundary conditions that can be adapted to other types of pieces. 
-%Left side
+%Left side (adiabatic)
 ap(:, 1) = 1;
 ae(:, 1) = 1;
 an(:, 1) = 0;
@@ -58,7 +58,7 @@ as(:, 1) = 0;
 aw(:, 1) = 0;
 bp(:, 1) = 0;
 
-%Lower side
+%Lower side (adiabatic) 
 ap(1, :) = 1;
 ae(1, :) = 0;
 an(1, :) = 1;
