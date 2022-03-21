@@ -17,13 +17,13 @@ H = 2;
 lambda = 70;
 Text = 200;
 alpha_ext = 100; 
-Qv = 100;
+Qv = 1000;
 
 % Solver caractheristics
 n = 100;
 m = 100;
 delta = 10^-6;
-Tinic = 700;
+Tinic = 300;
 
 %% Calculating coefficients ([W/K])
 [ap,ae, aw, an, as, bp, node] = coefficient_calc(Text, alpha_ext, L, W, H, n , m, Qv, lambda);

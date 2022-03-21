@@ -5,8 +5,8 @@ function [T, Taux] = temp_field_calc(ap, ae, aw, an, as, bp, T, n, m)
 
 Taux = T;
 
-for j = 2:m
-    for i = 2:n
+for j = 2:m+1
+    for i = 2:n+1
         T(j,i) = (ae(j,i)*T(j,i+1) + aw(j,i)*T(j, i-1) + an(j,i)*T(j-1,i) ... 
             + as(j,i)*T(j+1,i) + bp(j,i))/ap(j,i);
     end

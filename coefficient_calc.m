@@ -80,7 +80,7 @@ an(1, :) = 0;
 as(1, :) = lambda/(inc_y/2);
 aw(1, :) = 0;
 bp(1, :) = alpha_ext*Text;
-ap(1, :) = as(m+2, :)+alpha_ext;
+ap(1, :) = as(1, :)+alpha_ext;
 
 
 end
