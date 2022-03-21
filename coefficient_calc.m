@@ -49,7 +49,7 @@ for j = 2:(m+1)
     pos_y = pos_y + inc_y;
 end
 
-%Boundary conditions that can be adapted to other types of pieces. 
+%% Boundary conditions that can be adapted to other types of pieces. 
 %Left side (adiabatic)
 ap(:, 1) = 1;
 ae(:, 1) = 1;
