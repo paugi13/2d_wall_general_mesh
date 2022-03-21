@@ -1,4 +1,4 @@
-function [ap,ae, aw, an, as, bp, node] = coefficient_calc(Text, alpha_ext, L, W, H, n , m, Qv)
+function [ap,ae, aw, an, as, bp, node] = coefficient_calc(Text, alpha_ext, L, W, H, n , m, Qv, lambda)
 % Function to calculate all the coefficients through the fin.
 % They are returned in vector format.
 
@@ -14,11 +14,11 @@ qv = Qv/(L*W*H);
 
 % Calculating coefficients ([W/K])
 % Boundary counditions may be required for nodes on limits.
-
-node(:,1) = 0;
-node(1,:) = 0;
-node(m+2, :) = H;
-node(:, n+2) = L;
+% 
+% node(:,1) = 0;
+% node(1,:) = 0;
+% node(m+2, :) = H;
+% node(:, n+2) = L;
 
 inc_y = H/m;
 inc_x = L/n;
@@ -28,7 +28,7 @@ pos_y = inc_y/2;
 for j = 2:(m+1)
     for i=2:(n+1)
        pos_x = pos_x + inc_x; 
-       node(j,i) = [pos_x pos_y];
+%        node(j,i) = [pos_x pos_y];
        Sw = inc_y*W;
        Se = inc_y*W;
        Sn = inc_x*W;
@@ -59,12 +59,12 @@ aw(:, 1) = 0;
 bp(:, 1) = 0;
 
 %Lower side (adiabatic) 
-ap(1, :) = 1;
-ae(1, :) = 0;
-an(1, :) = 1;
-as(1, :) = 0;
-aw(1, :) = 0;
-bp(1, :) = 0;
+ap(m+2, :) = 1;
+ae(m+2, :) = 0;
+an(m+2, :) = 1;
+as(m+2, :) = 0;
+aw(m+2, :) = 0;
+bp(m+2, :) = 0;
 
 %Right side
 ae(:, n+2) = 0;
@@ -72,15 +72,15 @@ an(:, n+2) = 0;
 as(:, n+2) = 0;
 aw(:, n+2) = lambda/(inc_x/2);
 bp(:, n+2) = alpha_ext*Text;
-ap(:, n+2) = aw+alpha_ext;
+ap(:, n+2) = aw(:, n+2)+alpha_ext;
 
 %Upper side
-ae(m+2, :) = 0;
-an(m+2, :) = 0;
-as(m+2, :) = lambda/(inc_y/2);
-aw(m+2, :) = 0;
-bp(m+2, :) = alpha_ext*Text;
-ap(m+2, :) = as+alpha_ext;
+ae(1, :) = 0;
+an(1, :) = 0;
+as(1, :) = lambda/(inc_y/2);
+aw(1, :) = 0;
+bp(1, :) = alpha_ext*Text;
+ap(1, :) = as(m+2, :)+alpha_ext;
 
 
 end

@@ -17,7 +17,7 @@ H = 2;
 lambda = 70;
 Text = 200;
 alpha_ext = 100; 
-Qv = 1000;
+Qv = 100;
 
 % Solver caractheristics
 n = 100;
@@ -26,7 +26,7 @@ delta = 10^-6;
 Tinic = 700;
 
 %% Calculating coefficients ([W/K])
-[ap,ae, aw, an, as, bp, node] = coefficient_calc(Text, alpha_ext, L, W, H, n , m, Qv);
+[ap,ae, aw, an, as, bp, node] = coefficient_calc(Text, alpha_ext, L, W, H, n , m, Qv, lambda);
 
 %% Initiation
 T = zeros(m+2, n+2);
@@ -43,12 +43,14 @@ rep = 0;
 
 while boolean == true
     [T, Taux] = temp_field_calc(ap, ae, aw, an, as, bp, T, n, m);
-    [error] = error_calc(T, Taux, n);
+    [error] = error_calc(T, Taux, n, m);
     if max(error, [], 'all') < delta
         boolean = false;
     end
     rep = rep+1;
 end
 
-
 %Postprocessing
+
+figure
+pcolor(T);
