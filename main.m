@@ -51,6 +51,7 @@ while boolean == true
 end
 
 %Postprocessing
-
 figure
 pcolor(T);
+caxis([200 205]);
+colorbar
