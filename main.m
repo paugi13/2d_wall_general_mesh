@@ -50,7 +50,8 @@ while boolean == true
     rep = rep+1;
 end
 
-%Postprocessing
+%% Postprocessing
+%The heatmap's orientation as it treats the matrix differently. 
 figure
 pcolor(T);
 caxis([200 205]);
