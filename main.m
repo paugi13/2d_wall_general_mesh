@@ -56,3 +56,12 @@ figure
 pcolor(T);
 caxis([200 205]);
 colorbar
+
+%Try to define the heatmap in order to make it match with the pcolor
+%requirements.
+
+% T = [Lower left side ----- Lower right side
+%      Upper left side ----- Upper right side]
+% Order for correct plotting. 
+
+
